@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const api = require('./api');
+const { scores } = require('./data_tier/scores');
 
 
 
@@ -32,6 +33,47 @@ application.post('/register', (request, response) => {
     }
 });
 
+application.post('/login', (request, response) => {
+    let email = request.body.email;
+    let password = request.body.password;
+    let isValid = api.customerLogin(email, password);
+    if(isValid) {
+        response.json({message: 'Login successful'});
+    } else {
+        response.status(404).json({message: 'User not found'});
+    }
+
+});
+
+application.get('/flowers', (request, response) => {
+    let flowerName = api.getFlowers();
+    response.send(JSON. stringify(flowerName));
+});
+
+application.get('/quizzes', (request, response) => {
+    let quizQuestions = api.getQuizzes();
+    response.send(JSON. stringify(quizQuestions));
+});
+
+application.get('/quiz/:id', (request, response) => {
+    let quizID = api.getQuizID(request.params.id);
+    response.send(JSON. stringify(quizID));
+});
+
+application.post('/score', (request, response) => {
+    api.addScore(request.body.quizTaker, request.body.quizID, request.body.score);
+    response.send(JSON. stringify({message: "Score was added"}));
+});
+
+application.get('/scores/:quiztaker/:quizid', (request, response) => {
+    let quizScore = api.checkUserScore(request.body.quizTaker, request.body.quizID);
+    if(quizScore == -1) {
+        response.status(404).json({message: 'User not found'});
+    } else {
+        response.send(JSON. stringify(quizScore));
+    }
+});
 
 application.listen(port, () => console.log('Listening on port' + port));
+
 
