@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const api = require('./api');
-const { scores } = require('./data_tier/scores');
+
 
 
 
@@ -20,6 +20,8 @@ application.get('/add/:n/:m', (request, response) => {
 
 application.get('/customers', (request, response) => {
     response.json(api.getCustomers());
+
+});
 
 application.post('/register', (request, response) => {
     let name = request.body.name;
@@ -75,5 +77,3 @@ application.get('/scores/:quiztaker/:quizid', (request, response) => {
 });
 
 application.listen(port, () => console.log('Listening on port' + port));
-
-

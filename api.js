@@ -1,7 +1,5 @@
-var { customers } = require('./data_tier/customers');
-var { flowers } = require('./data_tier/flowers');
-var { quizzes } = require('./data_tier/data');
-var { scores } = require('./data_tier/scores');
+
+
 
 let add = (n, m) => {
     return n + m;
@@ -37,14 +35,6 @@ let getQuizID = (id) => {
     return quizzes[id];
 }
 
-let addCustomer = (name, email, password) => {
-    let alreadyExist = customers.find(x=> x.email.toLowerCase() === email.toLowerCase());
-    if(alreadyExist){
-        return true;
-    }
-    customers.push({id: customers.length + 1, name: name, email: email, password: password});
-    return false;
-}
 
 let customerLogin = ( email, password) => {
     let isValid = customers.find(x => x.email.toLowerCase() === email.toLowerCase() && x.password == password);
