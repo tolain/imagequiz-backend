@@ -1,5 +1,4 @@
-
-
+const { quizzes } = require('./data_tier/data')
 
 let add = (n, m) => {
     return n + m;
@@ -35,6 +34,9 @@ let getQuizID = (id) => {
     return quizzes[id];
 }
 
+let getQuizzes = () => {
+    return quizzes;
+}
 
 let customerLogin = ( email, password) => {
     let isValid = customers.find(x => x.email.toLowerCase() === email.toLowerCase() && x.password == password);
@@ -67,3 +69,4 @@ exports.getQuizID = getQuizID;
 exports.customerLogin = customerLogin;
 exports.addScore = addScore;
 exports.checkUserScore = checkUserScore;
+exports.getQuizzes = getQuizzes;
