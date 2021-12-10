@@ -87,12 +87,12 @@ application.get('/scores/:quiztaker/:quizid', (request, response) => {
 
 
 
-/*
+
 application.get('/quiz/:id', (request, response) => {
     let quizID = api.getQuizID(request.params.id);
     response.send(JSON. stringify(quizID));
 });
-
+/*
 application.post('/score', (request, response) => {
     api.addScore(request.body.quizTaker, request.body.quizID, request.body.score);
     response.send(JSON. stringify({message: "Score was added"}));
