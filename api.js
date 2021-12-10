@@ -1,4 +1,7 @@
 const { quizzes } = require('./data_tier/data')
+const { customers } = require('./data_tier/customers')
+const { flowers } = require('./data_tier/flowers')
+
 
 let add = (n, m) => {
     return n + m;

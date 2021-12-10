@@ -25,8 +25,9 @@ application.get('/customers', (request, response) => {
 
 application.post('/register', (request, response) => {
     let name = request.body.name;
-    let email = request.params.email;
+    let email = request.body.email;
     let password = request.body.password;
+    console.log(name, email, password)
     let alreadyExists = api.addCustomer(name, email, password);
     if(alreadyExists) {
         response.status(403).json({message: 'A customer with the same email already exists.'})
