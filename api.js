@@ -48,7 +48,7 @@ let customerLogin = ( email, password) => {
     }
     return false;
 }
-
+/*
 let addScore = (quizTaker, quizID, score) => {
     scores.push({quizTaker, quizID, score});
 }
@@ -61,8 +61,19 @@ let checkUserScore = (quizTaker, quizID) => {
     }
     return -1;
 }
+*/
+const getScores = async () => {
+    return (await db.getScores()).rows;
+  };
+  
+  const getScore = async (email, id) => {
+    return (await db.getScore(email, id)).rows;
+  };
+  
+  const setScore = async (quizTaker, quizId, score) => {
+    return await db.setScore(quizTaker, quizId, score);
 
-
+  };
 exports.add = add;
 exports.getFlowers = getFlowers;
 exports.getCustomers = getCustomers;
@@ -70,6 +81,11 @@ exports.sub = sub;
 exports.addCustomer = addCustomer;
 exports.getQuizID = getQuizID;
 exports.customerLogin = customerLogin;
+/*
 exports.addScore = addScore;
 exports.checkUserScore = checkUserScore;
+*/
 exports.getQuizzes = getQuizzes;
+exports.getScores = getScores;
+exports.getScore = getScore;
+exports.setScore = setScore;
