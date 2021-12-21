@@ -82,6 +82,7 @@ exports.sub = sub;
 exports.addCustomer = addCustomer;
 exports.getQuizID = getQuizID;
 exports.customerLogin = customerLogin;
+exports.getQuizzes = getQuizzes
 /*
 exports.addScore = addScore;
 exports.checkUserScore = checkUserScore;
