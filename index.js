@@ -1,21 +1,107 @@
 const express = require('express');
 const cors = require('cors');
 const api = require('./api');
+require('dotenv').config();
+const { v4: uuid } = require('uuid');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const TwitterStrategy = require('passport-twitter').Strategy;
+const { request, response } = require('express');
+const frontEnd = 'http://localhost:3000';
 
  // making changes
+ passport.use(new LocalStrategy(
+    { usernameField: 'email'},
+    (email, password, done) => {
+        console.log('Inside local strategy callback');
+        api.login(email, password)
+            .then(x => {
+                console.log(x);
+                if (x.isValid) {
+                    let user = { id: x.id, name: x.name, email: email };
+                    console.log(user);
+                    return done(null, user);
+                } else {
+                    console.log('The email or password is not valid.');
+                    return done(null, false, 'The email or password was invalid');
+                }
+            })
+            .catch(e => {
+                console.log(e);
+                return done(e);
+            });
+    }
+));
+
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: '/return/twitter',
+},
+    (token, tokenSecret, profile, done) => {
+        console.log('Inside passport twitter ...');
+        //console.log(profile._json.screen_name);
+        //console.log(profile);
+        let user = { id: profile.id, name: profile.displayName, username: profile.username };
+        return done(null, user);
+    }));
+
+passport.serializeUser((user, done) => {
+    console.log('Inside serializeUser callback. User id is dave to the session file store here')
+    done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+    console.log('Inside deserializeUser callback')
+    console.log(`The user id passport saved in the session file store is: ${id}`)
+    const user = {id: id};
+    done(null, user);
+});
 
 
 const application = express();
 const port = process.env.PORT || 4003;
-application.use(cors());
 application.use(express.json());
+application.use(cors({
+    origin: 'http://localhost:3000', // allow to server to accept request from different origin
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    credentials: true, // allow session cookie from browser to pass through
+}));
+
+application.use(session({
+    genid: (request) => {
+        //console.log(request);
+        console.log('Inside session middleware genud function');
+        console.log(`Request object sessionID from client: ${request.sessionID}`);
+
+        return uuid(); // use UUIDs for session IDs
+    },
+    store: new FileStore(),
+    secret: 'some random string',
+    resave: false,
+    saveUninitialized: true
+}));
+application.use(passport.initialize());
+application.use(passport.session());
+
 
 application.get('/add/:n/:m', (request, response) => {
-    let n = Number(request.params.n);
-    let m = Number(request.params.m);
-    let sum = api.add(m, n);
-    response.send(`${n} +  ${m} = ${sum}.`);
-
+    console.log('in /add');
+    console.log(request.user);
+    console.log(request.sessionID);
+    if (request.isAuthenticated()) {
+        console.log('Inside /add - inside isAuthenticated');
+        console.log(`req.session.passport: ${JSON.stringify(request.session.passport)}`);
+        console.log(`req.user: ${JSON.stringify(request.user)}`);
+        let n = Number(request.params.n);
+        let m = Number(request.params.m);
+        let sum = api.add(m, n);
+        response.json({done: true, sum: sum});
+    } else {
+        response.status(401).json({done: false, message: 'You need to log in first.'})
+    }
 });
 
 application.get('/customers', (request, response) => {
