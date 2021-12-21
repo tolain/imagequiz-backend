@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const api = require('./api');
 
- // making cjanges
+ // making changes
 
 
 const application = express();
@@ -57,7 +57,7 @@ application.get('/quizzes', (request, response) => {
     let quizQuestions = api.getQuizzes();
     response.send(JSON. stringify(quizQuestions));
 });
-
+/*
 application.post('/score', (request, response) => {
     let quizTaker = request.body.quizTaker;
     let quizId = request.body.quizId;
@@ -84,14 +84,13 @@ application.get('/scores/:quiztaker/:quizid', (request, response) => {
         response.status(e).json({message: 'ERROR'});
     });
 });
-
-
-
+*/
 
 application.get('/quiz/:id', (request, response) => {
     let quizID = api.getQuizID(request.params.id);
     response.send(JSON. stringify(quizID));
 });
+
 /*
 application.post('/score', (request, response) => {
     api.addScore(request.body.quizTaker, request.body.quizID, request.body.score);
@@ -107,5 +106,33 @@ application.get('/scores/:quiztaker/:quizid', (request, response) => {
     }
 });
 */
+application.get("/scores", async (req, res) => {
+    let scores = await api.getScores();
+    res.json(scores);
+  });
+  
+  application.get("/scores/:quiztaker/:quizid", (req, res) => {
+    let email = req.params.quiztaker;
+    let id = Number(req.params.quizid);
+  
+    let scores = api.getScore(email, id);
+  
+    res.json(scores);
+  });
+  
+  application.post("/score", async (req, res) => {
+    const email = req.body.email;
+    const quizName = req.body.quizName;
+    const score = Number(req.body.score);
+    api
+      .setScore(email, quizName, score)
+      .then((x) => res.json({ message: "Score set succesfully" }))
+      .catch((e) => {
+        console.log(e);
+        res.status(500).json({ message: "Something went wrong" });
+      });
+  });
+  
+
 
 application.listen(port, () => console.log('Listening on port' + port));
