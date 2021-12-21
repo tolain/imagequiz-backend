@@ -62,6 +62,7 @@ let checkUserScore = (quizTaker, quizID) => {
     return -1;
 }
 */
+
 const getScores = async () => {
     return (await db.getScores()).rows;
   };
@@ -72,8 +73,8 @@ const getScores = async () => {
   
   const setScore = async (quizTaker, quizId, score) => {
     return await db.setScore(quizTaker, quizId, score);
-
   };
+
 exports.add = add;
 exports.getFlowers = getFlowers;
 exports.getCustomers = getCustomers;
@@ -85,7 +86,7 @@ exports.customerLogin = customerLogin;
 exports.addScore = addScore;
 exports.checkUserScore = checkUserScore;
 */
-exports.getQuizzes = getQuizzes;
 exports.getScores = getScores;
 exports.getScore = getScore;
 exports.setScore = setScore;
+

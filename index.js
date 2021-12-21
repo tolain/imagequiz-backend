@@ -106,5 +106,31 @@ application.get('/scores/:quiztaker/:quizid', (request, response) => {
     }
 });
 */
+application.get("/scores", async (req, res) => {
+    let scores = await api.getScores();
+    res.json(scores);
+  });
+  
+  application.get("/scores/:quiztaker/:quizid", (req, res) => {
+    let email = req.params.quiztaker;
+    let id = Number(req.params.quizid);
+  
+    let scores = api.getScore(email, id);
+  
+    res.json(scores);
+  });
+  
+  application.post("/score", async (req, res) => {
+    const email = req.body.email;
+    const quizName = req.body.quizName;
+    const score = Number(req.body.score);
+    api
+      .setScore(email, quizName, score)
+      .then((x) => res.json({ message: "Your Score Has Been Added" }))
+      .catch((e) => {
+        console.log(e);
+        res.status(500).json({ message: "There is an Error Somewhere" });
+      });
+  });
 
 application.listen(port, () => console.log('Listening on port' + port));
